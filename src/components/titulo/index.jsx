@@ -1,15 +1,15 @@
-import React, {Component} from 'react';
-import './index.css';
+import React from 'react';
+import {Jumbotron} from 'react-bootstrap';
 
-class Titulo extends Component {
-        render(){
-            return(
-                <div className='background'>
-                    <h1>{this.props.texto || 'Titulo não informado'}</h1>
-                    <h4>{this.props.descricao || 'Descricão não informada'}</h4>
-                </div>
-            )
-        }
+const Titulo = ({titulo, chamada}) => {
+    return(
+        <Jumbotron>
+            <h1>{titulo}</h1>
+            <p>
+                {chamada}
+            </p>
+        </Jumbotron>
+    )
 }
 
 export default Titulo; 

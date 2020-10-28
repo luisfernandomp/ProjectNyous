@@ -7,11 +7,39 @@ import Cadastrar from './pages/cadastrar';
 import Eventos from './pages/eventos';
 import Naoencontrado from './pages/naoencontrado';
 import Dashboard from './pages/admin/dashboard';
+import CrudEventos from './pages/admin/crudeventos';
+import CrudCategorias from './pages/admin/crudcategorias';
+import jwt_decode from 'jwt-decode';
 
 import * as serviceWorker from './serviceWorker';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+
+const RotaPrivada = ({component : Component, ...rest }) => (
+  <Route 
+    {...rest}
+    render = {
+      props => 
+        localStorage.getItem('token-nyous') === null ?
+        <Component {...props} /> :
+        <Redirect to={{pathname : '/login', state : {from : props.location}}} />
+    }
+  />
+); 
+
+const RotaPrivadaAdmin = ({component : Component, ...rest }) => (
+
+  <Route 
+    {...rest}
+    render = {
+      props => 
+        localStorage.getItem('token-nyous') !== null && jwt_decode(localStorage.getItem('token-nyous')).role !== 'Admin' ?
+        <Component {...props} /> :
+        <Redirect to={{pathname : '/login', state : {from : props.location}}} /> 
+    }
+  />
+);
 
 const routing = (
   <Router>
@@ -19,8 +47,10 @@ const routing = (
       <Route exact path='/' component={Home} />
       <Route exact path='/login' component={Login} />
       <Route exact path='/cadastrar' component={Cadastrar} />
-      <Route exact path='/eventos' component={Eventos} />
-      <Route exact path='/admin/dashboard' component={Dashboard} />   
+      <RotaPrivada exact path='/eventos' component={Eventos} />
+      <RotaPrivadaAdmin exact path='/admin/dashboard' component={Dashboard} />
+      <RotaPrivadaAdmin exact path='/admin/categorias' component={CrudCategorias} />
+      <RotaPrivadaAdmin exact path='/admin/eventos' component={CrudEventos} />   
       <Route component={Naoencontrado} />
     </Switch>
   </Router>
